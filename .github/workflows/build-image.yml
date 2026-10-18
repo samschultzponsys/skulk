@@ -65,12 +65,18 @@ jobs:
       # `platforms:` line to make builds ~2x faster.
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
+        with:
+          cache-image: false   # don't store the binfmt image in Actions cache
 
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
+      # No layer cache: type=gha stored every build's layers in Actions cache,
+      # which counts against the account's 0.5 GB Actions storage.
       - name: Build and push
         uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false   # skip the .dockerbuild artifact
         with:
           context: .
           file: ./Dockerfile
@@ -78,8 +84,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       # One GitHub Release per CHANGELOG.md version, created only after the
       # image pushed. Missing older releases are backfilled (tagged on the
