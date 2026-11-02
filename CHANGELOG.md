@@ -4,6 +4,18 @@ Versions are always `MAJOR.MINOR` with a single-digit minor: `1.0`, `1.1` … `1
 The newest `## x.y` heading below is the version the app reports and the tag the
 GitHub Action publishes the image under — bump it here and nowhere else.
 
+## 1.8 — 2026-11-02
+
+### Added
+- **Lock reserved devices** (Settings → Sync & pools, *on* by default). A device
+  with a reservation on the controller (UniFi fixed IP, a DHCP static lease, …) is
+  locked automatically, so auto-sort and the grace-period fallback leave it alone.
+  - Devices that are already reserved get locked when you update or switch it on.
+  - If the reservation is removed on the controller, the automatic lock lifts again.
+    Locks you set yourself are never touched.
+  - Unlock a reserved device by hand to opt it out. It stays unlocked as long as
+    the reservation stays.
+
 ## 1.7 — 2026-10-11
 
 ### Added

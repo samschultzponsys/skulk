@@ -713,6 +713,7 @@ function App() {
     if (r.ok) {
       const bits = [`+${r.added} new`, `${r.greyed} offline`];
       if (r.pooled) bits.push(`${r.pooled} sorted into pools`);
+      if (r.locked) bits.push(`${r.locked} reserved → locked`);
       if (r.moved) bits.push(`${r.moved} → Unallocated`);
       if (r.pruned) bits.push(`${r.pruned} pruned`);
       if (r.skipped) bits.push(`${r.skipped} excluded`);
@@ -1262,6 +1263,7 @@ function SettingsModal({settings, excluded, onPreview, onClose, reload, flash, i
     auto_sync_unit: settings.auto_sync_unit || "minutes",
     auto_pool_new: settings.auto_pool_new ?? true,
     auto_pool_every_sync: !!settings.auto_pool_every_sync,
+    lock_reserved: settings.lock_reserved ?? true,
     prune_days: settings.prune_days ?? 0,
     app_name: settings.app_name || "",
     font_logo: settings.font_logo || "",
@@ -1381,6 +1383,10 @@ function SettingsModal({settings, excluded, onPreview, onClose, reload, flash, i
             <input type="checkbox" checked={!!f.auto_pool_every_sync} onChange={e=>set("auto_pool_every_sync",e.target.checked)} />
             Re-sort every device into its matching pool on every sync (manual and timed).
             Overrides drag-and-drop; lock a device to keep it where you put it.</label></div>
+          <div className="field check"><label>
+            <input type="checkbox" checked={!!f.lock_reserved} onChange={e=>set("lock_reserved",e.target.checked)} />
+            Lock devices that have a reservation (fixed IP / static lease) on the controller.
+            The lock lifts again if the reservation is removed; unlock by hand to opt a device out.</label></div>
           <div className="field">
             <button onClick={sortNow} disabled={sorting}>{sorting ? "Sorting…" : "⇢ Sort all devices into matching pools now"}</button>
             <div className="hint">One-off: moves every unlocked device whose IP falls in a pool's subnet into that pool

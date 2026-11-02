@@ -136,6 +136,11 @@ return `{mac: {ip, name, hostname, online, is_reserved, last_seen}}` from
 - **Re-sort every device on every sync** (*off* by default): each sync, manual or
   timed, moves every unlocked device into its matching pool. This overrides
   drag-and-drop, so **lock** (🔒) a device to keep it where you put it.
+- **Lock reserved devices** (*on* by default): a device with a reservation on the
+  controller (UniFi fixed IP, a DHCP static lease, …) is locked automatically when
+  it's first seen as reserved. Removing the reservation lifts that automatic lock;
+  locks you set yourself are never touched. Unlock a reserved device by hand to opt
+  it out; it stays unlocked while the reservation stays.
 - **Sort all devices into matching pools now**: a one-off button for devices that
   existed before a pool was defined, or before you turned the setting on.
 - Creating or editing a pool has a checkbox, on by default, to pull in its matching
@@ -510,6 +515,7 @@ Before sign-in, only these are reachable:
 - Online devices show stronger (pool-color accent); offline ones recede. **RES**
   reflects fixed-IP / static-lease assignments on the controller.
 - **Lock** a device (🔒) to protect it from auto-sort and the grace-period fallback.
+  Reserved devices are locked automatically (Settings → Sync & pools).
 - Offline, non-reserved devices past the grace period (default 7 days) fall back to
   Unallocated, so the IP stays visible. They are never silently deleted.
 - Deleting a synced device excludes it permanently, so sync won't re-add it. Restore

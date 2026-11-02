@@ -191,6 +191,7 @@ SETTING_DEFAULTS = {
     "auto_sync_unit": "minutes",
     "auto_pool_new": "1",          # new devices go straight into a matching pool
     "auto_pool_every_sync": "0",   # re-sort every unlocked device on every sync
+    "lock_reserved": "1",          # lock devices the controller has a reservation for
     "prune_days": "0",             # forget stale offline clients after N days (0 = never)
     "theme": "dark",
     "font_size": "18",
@@ -300,6 +301,12 @@ def init_db():
         cols = {r[1] for r in db.execute("PRAGMA table_info(devices)").fetchall()}
         if "locked" not in cols:
             db.execute("ALTER TABLE devices ADD COLUMN locked INTEGER NOT NULL DEFAULT 0")
+        # 1.8: locks set by "lock reserved devices" (vs. by hand), so they can be
+        # lifted again when the reservation goes away on the controller
+        if "auto_locked" not in cols:
+            db.execute("ALTER TABLE devices ADD COLUMN auto_locked INTEGER NOT NULL DEFAULT 0")
+            if setting_bool(db, "lock_reserved", True):
+                lock_reserved_devices(db)
         # 1.2: per-pool header style + hide-when-empty
         pcols = {r[1] for r in db.execute("PRAGMA table_info(pools)").fetchall()}
         if "hide_empty" not in pcols:
@@ -911,6 +918,7 @@ def serialize_state(db):
         "auto_sync_unit": unit if unit in SYNC_UNITS else "minutes",
         "auto_pool_new": setting_bool(db, "auto_pool_new", True),
         "auto_pool_every_sync": setting_bool(db, "auto_pool_every_sync", False),
+        "lock_reserved": setting_bool(db, "lock_reserved", True),
         "prune_days": setting_int(db, "prune_days", 0),
         "last_sync": setting_int(db, "last_sync", 0),
         "theme": get_setting(db, "theme", "dark"),
@@ -1214,6 +1222,8 @@ def update_device(did):
     data = request.get_json(force=True)
     fields = []
     values = []
+    if "locked" in data:
+        fields.append("auto_locked=0")    # set by hand now: sync leaves it alone
     for key in ("name", "hostname", "ip", "notes", "pool_id", "is_reserved", "locked", "mac"):
         if key in data:
             fields.append(f"{key}=?")
@@ -1274,7 +1284,15 @@ def restore_excluded(mac):
 
 _PLAIN_SETTINGS = ("grace_days", "prune_days", "theme", "font_size", "app_name",
                    "font_logo", "font_head", "font_body")
-_BOOL_SETTINGS = ("auto_pool_new", "auto_pool_every_sync", "update_check")
+_BOOL_SETTINGS = ("auto_pool_new", "auto_pool_every_sync", "lock_reserved", "update_check")
+
+
+def lock_reserved_devices(db):
+    """Lock every reserved, unlocked device (marked as an automatic lock).
+    Run when "lock reserved devices" is switched on, so existing reservations
+    are covered too, not only ones that appear later."""
+    return db.execute(
+        "UPDATE devices SET locked=1, auto_locked=1 WHERE is_reserved=1 AND locked=0").rowcount
 
 
 @app.route("/api/settings", methods=["PUT"])
@@ -1292,9 +1310,12 @@ def update_settings():
             elif key == "app_name":
                 val = (str(val or "").strip() or DEFAULT_APP_NAME)[:60]
             set_setting(db, key, val)
+    was_lock_res = setting_bool(db, "lock_reserved", True)
     for key in _BOOL_SETTINGS:
         if key in data:
             set_setting(db, key, "1" if data[key] else "0")
+    if data.get("lock_reserved") and not was_lock_res:
+        lock_reserved_devices(db)
     if "logo_style" in data:
         set_setting(db, "logo_style", json.dumps(branding.clean_logo(data["logo_style"])))
     if "icon_style" in data:
@@ -1389,9 +1410,10 @@ def perform_sync(db):
     auto_new = setting_bool(db, "auto_pool_new", True)
     nets = pool_networks(db) if auto_new else []
     excluded = {normalize_mac(r[0]) for r in db.execute("SELECT mac FROM excluded").fetchall()}
+    lock_res = setting_bool(db, "lock_reserved", True)
 
     seen = {}          # mac -> is_reserved per the controller right now
-    added = updated = skipped = ignored = pooled = 0
+    added = updated = skipped = ignored = pooled = locked_n = 0
 
     for raw_mac, info in clients.items():
         mac = normalize_mac(raw_mac)
@@ -1438,8 +1460,16 @@ def perform_sync(db):
                 ),
             )
             updated += 1
+            # Lock on the switch to reserved (so unlocking by hand sticks while
+            # the reservation stays); lift our own lock when it's dropped.
+            if lock_res and is_res and not existing["is_reserved"] and not existing["locked"]:
+                db.execute("UPDATE devices SET locked=1, auto_locked=1 WHERE mac=?", (mac,))
+                locked_n += 1
+            elif not is_res and existing["auto_locked"]:
+                db.execute("UPDATE devices SET locked=0, auto_locked=0 WHERE mac=?", (mac,))
         else:
             pool = dflt
+            auto_lock = lock_res and reserved
             fresh = online or reserved or last_seen >= grace_cutoff
             if auto_new and fresh:
                 match = match_pool(nets, info["ip"])
@@ -1447,12 +1477,14 @@ def perform_sync(db):
                     pool = match
                     pooled += 1
             db.execute(
-                "INSERT INTO devices (mac,name,hostname,ip,pool_id,source,is_online,is_reserved,notes,first_seen,last_seen) "
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                "INSERT INTO devices (mac,name,hostname,ip,pool_id,source,is_online,is_reserved,"
+                "locked,auto_locked,notes,first_seen,last_seen) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 (mac, info["name"], info["hostname"], info["ip"], pool, pid,
-                 1 if online else 0, 1 if reserved else 0, "", ts, last_seen),
+                 1 if online else 0, 1 if reserved else 0,
+                 1 if auto_lock else 0, 1 if auto_lock else 0, "", ts, last_seen),
             )
             added += 1
+            locked_n += 1 if auto_lock else 0
 
     # Aging pass over every synced (non-manual) device:
     #  - locked                      -> left completely alone
@@ -1466,8 +1498,11 @@ def perform_sync(db):
         in_fetch = d["mac"] in seen
         online = bool(d["is_online"]) if in_fetch else False
         reserved = bool(d["is_reserved"]) if in_fetch else False
-        if not in_fetch and (d["is_online"] or d["is_reserved"]):
+        if not in_fetch and (d["is_online"] or d["is_reserved"] or d["auto_locked"]):
             db.execute("UPDATE devices SET is_online=0, is_reserved=0 WHERE id=?", (d["id"],))
+            if d["auto_locked"]:   # its reservation went, so does the auto lock
+                db.execute("UPDATE devices SET locked=0, auto_locked=0 WHERE id=?", (d["id"],))
+                d = dict(d, locked=0)
         if d["locked"] or online or reserved:
             continue
         last = d["last_seen"] or 0
@@ -1487,7 +1522,7 @@ def perform_sync(db):
     return {
         "ok": True, "added": added, "updated": updated, "greyed": offline,
         "moved": moved, "skipped": skipped, "ignored": ignored, "pruned": pruned,
-        "pooled": pooled + sorted_n, "mode": plat.label,
+        "pooled": pooled + sorted_n, "locked": locked_n, "mode": plat.label,
     }
 
 
