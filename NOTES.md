@@ -2,8 +2,9 @@
 
 ## Blocked on the user
 - **Finish the Skulk rename (1.9).**
-  - Rename the GitHub repo to `Skulk-IPAM`. CI names the image after the repo, so
-    builds only land at `ghcr.io/samschultzponsys/skulk-ipam` once it's renamed.
+  - The repo is renamed to `skulk`. CI publishes to `ghcr.io/samschultzponsys/skulk-ipam`
+    (set in the workflow). The first 1.9 build also went to
+    `ghcr.io/samschultzponsys/skulk` before that fix; that package can be deleted.
   - After the first build, check the new `skulk-ipam` package's visibility in
     GitHub → Packages (make it public if the old one was).
   - Switch the server's compose to `skulk-ipam` (see the readme).

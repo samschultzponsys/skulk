@@ -514,7 +514,7 @@ Before sign-in, only these are reachable:
 | `IPAM_THREADS` | web server threads (default 8) |
 | `IPAM_UPDATE_CHECK` | `false` to hard-disable the GHCR update check |
 | `IPAM_UPDATE_IMAGE` | image to check for updates (default `ghcr.io/samschultzponsys/skulk-ipam`); also settable in the UI |
-| `IPAM_UPDATE_REPO` | GitHub repo whose `CHANGELOG.md` is read for new versions (default `samschultzponsys/Skulk-IPAM`) |
+| `IPAM_UPDATE_REPO` | GitHub repo whose `CHANGELOG.md` is read for new versions (default `samschultzponsys/skulk`) |
 | `IPAM_GITHUB_TOKEN` | GitHub token for a private image/repo and the Issues panel; also settable in Settings → Maintenance |
 | `IPAM_ISSUES_REPO` | repo for the Issues panel (default: the update-source repo); also settable in the UI |
 | `IPAM_ISSUES` | `false` to hard-disable the GitHub Issues panel and its sync |

@@ -27,9 +27,10 @@ jobs:
         with:
           fetch-depth: 0   # full history + tags: releases are tagged on the commit that shipped them
 
-      # GHCR requires a lowercase image path
+      # GHCR requires a lowercase image path. The image is named skulk-ipam
+      # (not after the repo, which is just "skulk").
       - name: Compute image name
-        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/skulk-ipam" >> "$GITHUB_ENV"
 
       - name: Read version from CHANGELOG.md
         run: |

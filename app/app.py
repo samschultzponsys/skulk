@@ -123,7 +123,7 @@ def _env_bool(name, default=""):
 
 # Update check: which image to look at, and a hard off-switch
 DEFAULT_UPDATE_IMAGE = "ghcr.io/samschultzponsys/skulk-ipam"
-DEFAULT_UPDATE_REPO = "samschultzponsys/Skulk-IPAM"
+DEFAULT_UPDATE_REPO = "samschultzponsys/skulk"
 UPDATE_CHECK_ALLOWED = os.environ.get("IPAM_UPDATE_CHECK", "true").lower() not in ("0", "false", "no", "off")
 UPDATE_TTL = 6 * 3600
 

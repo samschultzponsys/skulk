@@ -15,7 +15,7 @@ GitHub Action publishes the image under — bump it here and nowhere else.
     folder carries over as is.
   - If you never changed the app name, it now shows **SKULK**. A custom name is
     kept.
-  - The update check and Issues panel follow the new repo, `samschultzponsys/Skulk-IPAM`.
+  - The update check and Issues panel follow the new repo, `samschultzponsys/skulk`.
   - The session cookie was renamed, so you'll sign in once more after updating.
   - The *Spazcat* gradient preset is now called *Skulk*. Same colors.
 
