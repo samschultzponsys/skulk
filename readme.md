@@ -1,4 +1,6 @@
-# Spazcat IPAM
+# Skulk
+
+*IP tracking & mapping for your network.*
 
 A lightweight, self-hosted IP Address Management tool. Your controller or router
 (UniFi, TP-Link Omada, Alta Labs, OpenWrt, MikroTik, OPNsense, Pi-hole, AdGuard Home,
@@ -82,8 +84,8 @@ the image, and that image is the only supported way to run the app.
 
 ## Deploy
 
-Spazcat IPAM ships as a prebuilt container image
-(`ghcr.io/samschultzponsys/spazcat-ipam`, amd64 + arm64). Grab
+Skulk ships as a prebuilt container image
+(`ghcr.io/samschultzponsys/skulk-ipam`, amd64 + arm64). Grab
 [`compose.yaml`](compose.yaml), put it in a folder on the host, and:
 
 ```bash
@@ -94,6 +96,14 @@ To update: `docker compose pull && docker compose up -d`. Your `data/` folder is
 reused and backed up automatically. You can pin a version tag (e.g. `:1.7`) instead
 of `:latest`. To carry over an existing instance, copy its `ipam.db` into `./data/`
 before first start.
+
+**Coming from Spazcat IPAM?** The app was renamed to Skulk in 1.9 and the image
+moved to `ghcr.io/samschultzponsys/skulk-ipam`. The old `spazcat-ipam` image gets
+no more updates. To switch, run `docker compose down`, then replace your
+`compose.yaml` with the new one (or change the service, `image:` and
+`container_name:` to `skulk-ipam`) and run `docker compose up -d`. Keep the same
+`./data` folder: your devices, pools and settings carry over. You'll sign in once
+more because the session cookie was renamed.
 
 The container has a health check (`/healthz`) and runs on the Waitress production
 web server. There's no local-build or bare-metal path. Changes go through GitHub,
@@ -357,11 +367,11 @@ user `admin` with a random password and prints it in a box in the log (use your
 container's name):
 
 ```bash
-docker logs spazcat-ipam 2>&1 | grep -A6 "ADMIN SIGN-IN"
+docker logs skulk-ipam 2>&1 | grep -A6 "ADMIN SIGN-IN"
 ```
 ```
   ╔══════════════════════════════════════════════════════╗
-  ║            SPAZCAT IPAM  -  ADMIN SIGN-IN            ║
+  ║               SKULK  -  ADMIN SIGN-IN                ║
   ╠══════════════════════════════════════════════════════╣
   ║     username :  admin                                ║
   ║     password :  Nx7e-zfgu-Dejp-P9Fk                  ║
@@ -444,7 +454,7 @@ Locked out? Either:
 A password hash for the environment can be made with the image itself:
 
 ```bash
-docker run --rm ghcr.io/samschultzponsys/spazcat-ipam python -c \
+docker run --rm ghcr.io/samschultzponsys/skulk-ipam python -c \
   "from werkzeug.security import generate_password_hash as g; print(g('yourpassword'))"
 ```
 
@@ -503,8 +513,8 @@ Before sign-in, only these are reachable:
 | `PORT` | listen port (default `20080`) |
 | `IPAM_THREADS` | web server threads (default 8) |
 | `IPAM_UPDATE_CHECK` | `false` to hard-disable the GHCR update check |
-| `IPAM_UPDATE_IMAGE` | image to check for updates (default `ghcr.io/samschultzponsys/spazcat-ipam`); also settable in the UI |
-| `IPAM_UPDATE_REPO` | GitHub repo whose `CHANGELOG.md` is read for new versions (default `samschultzponsys/Spazcat-IPAM`) |
+| `IPAM_UPDATE_IMAGE` | image to check for updates (default `ghcr.io/samschultzponsys/skulk-ipam`); also settable in the UI |
+| `IPAM_UPDATE_REPO` | GitHub repo whose `CHANGELOG.md` is read for new versions (default `samschultzponsys/Skulk-IPAM`) |
 | `IPAM_GITHUB_TOKEN` | GitHub token for a private image/repo and the Issues panel; also settable in Settings → Maintenance |
 | `IPAM_ISSUES_REPO` | repo for the Issues panel (default: the update-source repo); also settable in the UI |
 | `IPAM_ISSUES` | `false` to hard-disable the GitHub Issues panel and its sync |

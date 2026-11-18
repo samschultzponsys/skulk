@@ -1,4 +1,4 @@
-# Spazcat IPAM - runs the prebuilt image from GHCR (built by the GitHub Action).
+# Skulk - runs the prebuilt image from GHCR (built by the GitHub Action).
 # Run from this folder:  docker compose up -d
 # Update:                docker compose pull && docker compose up -d
 #
@@ -8,9 +8,9 @@
 #
 # Pin a version instead of latest if you prefer, e.g. :1.2 (tags are x.y).
 services:
-  spazcat-ipam:
-    image: ghcr.io/samschultzponsys/spazcat-ipam:latest
-    container_name: spazcat-ipam
+  skulk-ipam:
+    image: ghcr.io/samschultzponsys/skulk-ipam:latest
+    container_name: skulk-ipam
     pull_policy: always
     environment:
       TZ: America/Chicago
@@ -19,7 +19,7 @@ services:
 
       # ---------------------------------------------------------------------
       # Sign-in is set up in the app: Settings -> Security. On first start the
-      # log shows the admin password:  docker logs spazcat-ipam
+      # log shows the admin password:  docker logs skulk-ipam
       #
       # Everything below is OPTIONAL. An environment variable overrides (and
       # locks) the matching UI setting - handy for recovery. See README

@@ -1,6 +1,12 @@
 # Notes — open items
 
 ## Blocked on the user
+- **Finish the Skulk rename (1.9).**
+  - Rename the GitHub repo to `Skulk-IPAM`. CI names the image after the repo, so
+    builds only land at `ghcr.io/samschultzponsys/skulk-ipam` once it's renamed.
+  - After the first build, check the new `skulk-ipam` package's visibility in
+    GitHub → Packages (make it public if the old one was).
+  - Switch the server's compose to `skulk-ipam` (see the readme).
 - **Issues panel (1.7) needs a token permission.** Edit the fine-grained token used
   for update checks and add *Issues: Read and write* on this repo. Until then the
   panel can read but posts wait as "not sent"; they go out on the next sync once

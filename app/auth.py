@@ -1,5 +1,5 @@
 """
-Authentication for Spazcat IPAM.
+Authentication for Skulk.
 
 Configured in the UI (Settings -> Security) and stored in the DB. Environment
 variables override individual fields - useful for infrastructure-as-code and
@@ -346,7 +346,7 @@ class AuthConfig:
 
 def _banner(password):
     lines = [
-        "SPAZCAT IPAM  -  ADMIN SIGN-IN",
+        "SKULK  -  ADMIN SIGN-IN",
         "",
         "  username :  admin",
         f"  password :  {password}",

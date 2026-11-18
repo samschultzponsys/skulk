@@ -23,7 +23,7 @@ weight or style you want (e.g. the Bold file for a heavy logo).
 ## Default logo font
 
 If a file with `ethnocentric` in its name is here (e.g. `ethnocentric rg.otf`),
-the logo uses it by default. That keeps the original Spazcat wordmark. Without
+the logo uses it by default. That keeps the original wordmark. Without
 one, everything defaults to the monospace stack.
 
 ## Without rebuilding

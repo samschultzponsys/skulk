@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <link rel="manifest" href="/manifest.webmanifest" />
-<title>Spazcat IPAM</title>
+<title>Skulk</title>
 <link rel="icon" href="/icon/favicon" />
 <link rel="apple-touch-icon" href="/icon/apple-touch-icon.png" />
 <!-- @font-face rules for every file in static/fonts/ and data/fonts/,
@@ -648,7 +648,7 @@ function App() {
     }
   }, [s.font_css, s.font_options, fontPreview]);
 
-  const appName = s.app_name || "SPAZCAT IPAM";
+  const appName = s.app_name || "SKULK";
   useEffect(() => { document.title = appName; }, [appName]);
   const titleRef = React.useRef(null);
   const logoStyle = (fontPreview && fontPreview.logo_style) || s.logo_style;
@@ -1404,7 +1404,7 @@ function SettingsModal({settings, excluded, onPreview, onClose, reload, flash, i
         {tab === "look" && <>
           <div className="field"><label>App name (top-left wordmark, browser tab, login page)</label>
             <input value={f.app_name} maxLength="60" onChange={e=>set("app_name",e.target.value)}
-              placeholder="SPAZCAT IPAM" /></div>
+              placeholder="SKULK" /></div>
           {fontSelect("logo", "Logo font")}
           {f.logo_style && <LogoStyleEditor value={f.logo_style} onChange={v=>set("logo_style", v)} />}
           {f.icon_style && <IconEditor value={f.icon_style} onChange={v=>set("icon_style", v)}
@@ -1462,7 +1462,7 @@ function SettingsModal({settings, excluded, onPreview, onClose, reload, flash, i
 }
 
 const GRADIENT_PRESETS = [
-  ["Spazcat", ["#8b5cf6", "#f5a142"]], ["Sunset", ["#f43f5e", "#f97316", "#eab308"]],
+  ["Skulk", ["#8b5cf6", "#f5a142"]], ["Sunset", ["#f43f5e", "#f97316", "#eab308"]],
   ["Ocean", ["#0ea5e9", "#6366f1"]], ["Aurora", ["#22c55e", "#06b6d4", "#8b5cf6"]],
   ["Fire", ["#b91c1c", "#f97316"]], ["Candy", ["#ec4899", "#8b5cf6"]],
   ["Mint", ["#10b981", "#a3e635"]], ["Neon", ["#d946ef", "#22d3ee"]],
@@ -1827,7 +1827,7 @@ function SecurityTab({flash, reload}) {
         <button className="link" onClick={()=>copy(r.oidc_redirect_uri)}>copy</button>
       </div>
       <div className="field"><label>Issuer URL {envTag("oidc.issuer","IPAM_OIDC_ISSUER")}</label>
-        <input value={f.oidc.issuer} disabled={dis("oidc.issuer")} placeholder="https://auth.example.com/application/o/spazcat-ipam/"
+        <input value={f.oidc.issuer} disabled={dis("oidc.issuer")} placeholder="https://auth.example.com/application/o/skulk-ipam/"
           onChange={e=>setO("issuer", e.target.value)} /></div>
       <div className="style-grid">
         <div className="field"><label>Client ID {envTag("oidc.client_id","IPAM_OIDC_CLIENT_ID")}</label>

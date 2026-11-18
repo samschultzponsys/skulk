@@ -7,7 +7,7 @@
 <link rel="apple-touch-icon" href="/icon/apple-touch-icon.png" />
 <script src="/static/brand.js"></script>
 <link rel="manifest" href="/manifest.webmanifest" />
-<title>Spazcat IPAM — Sign in</title>
+<title>Skulk — Sign in</title>
 <link rel="icon" href="/icon/favicon" />
 <link rel="stylesheet" href="/api/fonts.css" />
 <style>
@@ -29,10 +29,11 @@
   }
   .brand {
     font-family: var(--font-display); font-weight: 800; letter-spacing: 2px;
-    font-size: 20px; text-align: center; margin-bottom: 22px;
+    font-size: 20px; text-align: center; margin-bottom: 4px;
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
+  .tagline { text-align: center; color: var(--muted); font-size: 12px; margin-bottom: 18px; }
   label { display: block; color: var(--muted); font-size: 12px; margin: 12px 0 5px; }
   input {
     width: 100%; background: var(--bg); color: var(--text);
@@ -67,7 +68,8 @@
 </head>
 <body>
   <div class="card">
-    <div class="brand" id="brand">SPAZCAT IPAM</div>
+    <div class="brand" id="brand">SKULK</div>
+    <div class="tagline">IP tracking &amp; mapping for your network</div>
     <div id="local" class="hide">
       <label for="u">Username</label>
       <input id="u" autocomplete="username" autofocus />

@@ -1,5 +1,5 @@
 """
-GitHub Issues for Spazcat IPAM: a two-way sync between a repo's issues and a
+GitHub Issues for Skulk: a two-way sync between a repo's issues and a
 local copy, plus the API behind the Issues panel.
 
 - Pull: issues and comments changed since the last sync (GitHub's `since`),
@@ -160,7 +160,7 @@ def gh(method, url, token, _hops=0, **kw):
     if not url.startswith(GITHUB_API + "/"):
         raise GHError(f"refusing to send the token to {url.split('/')[2]}")
     headers = {"Accept": "application/vnd.github.full+json",
-               "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "spazcat-ipam"}
+               "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "skulk-ipam"}
     headers.update(kw.pop("headers", {}))
     if token:
         headers["Authorization"] = f"Bearer {token}"

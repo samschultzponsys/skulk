@@ -65,7 +65,7 @@ for v in $(grep -oE '^## \[?v?[0-9]+\.[0-9]+' CHANGELOG.md | grep -oE '[0-9]+\.[
     date="$(git log -1 --format=%cI "$sha")"
     run env GIT_COMMITTER_DATE="$date" git -c user.name="github-actions[bot]" \
       -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-      tag -f -a "$tag" "$sha" -m "Spazcat IPAM $tag"
+      tag -f -a "$tag" "$sha" -m "Skulk $tag"
     if ! run git push origin "refs/tags/$tag"; then
       echo "::notice::$tag: dated tag push refused - creating the tag through the release instead"
       git tag -d "$tag" >/dev/null 2>&1 || true

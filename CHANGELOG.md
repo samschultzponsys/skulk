@@ -4,6 +4,21 @@ Versions are always `MAJOR.MINOR` with a single-digit minor: `1.0`, `1.1` … `1
 The newest `## x.y` heading below is the version the app reports and the tag the
 GitHub Action publishes the image under — bump it here and nowhere else.
 
+## 1.9 — 2026-11-18
+
+### Changed
+- **Spazcat IPAM is now Skulk** (*IP tracking & mapping for your network*). A skulk
+  is a group of foxes, which sneak around and keep track of everything.
+  - The image moved to `ghcr.io/samschultzponsys/skulk-ipam`, and the container is
+    now called `skulk-ipam`. The old `spazcat-ipam` image gets no more updates.
+    See *Coming from Spazcat IPAM?* in the readme to switch over. Your `./data`
+    folder carries over as is.
+  - If you never changed the app name, it now shows **SKULK**. A custom name is
+    kept.
+  - The update check and Issues panel follow the new repo, `samschultzponsys/Skulk-IPAM`.
+  - The session cookie was renamed, so you'll sign in once more after updating.
+  - The *Spazcat* gradient preset is now called *Skulk*. Same colors.
+
 ## 1.8 — 2026-11-02
 
 ### Added

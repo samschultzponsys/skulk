@@ -1,5 +1,5 @@
 """
-Logo + icon branding for Spazcat IPAM.
+Logo + icon branding for Skulk.
 
 - logo_style: how the top-left wordmark (and login page brand) is painted:
   solid / gradient / outline fill, an optional pattern overlay and a glow.

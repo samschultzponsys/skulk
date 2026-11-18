@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Spazcat IPAM - a lightweight IP allocation / device tracking tool.
+Skulk - a lightweight IP allocation / device tracking tool.
 
 - Pulls clients from a network controller / router (UniFi, TP-Link Omada,
   Alta Labs Route10, OpenWrt, MikroTik, OPNsense, Pi-hole, AdGuard Home,
@@ -60,7 +60,7 @@ BACKUPS_KEPT = 10
 app = Flask(__name__, static_folder=None)
 
 DEFAULT_POOL_COLOR = "#6b7280"  # gray
-DEFAULT_APP_NAME = "SPAZCAT IPAM"
+DEFAULT_APP_NAME = "SKULK"
 SYNC_UNITS = {"minutes": 1, "hours": 60, "days": 1440}
 
 
@@ -122,13 +122,13 @@ def _env_bool(name, default=""):
 
 
 # Update check: which image to look at, and a hard off-switch
-DEFAULT_UPDATE_IMAGE = "ghcr.io/samschultzponsys/spazcat-ipam"
-DEFAULT_UPDATE_REPO = "samschultzponsys/Spazcat-IPAM"
+DEFAULT_UPDATE_IMAGE = "ghcr.io/samschultzponsys/skulk-ipam"
+DEFAULT_UPDATE_REPO = "samschultzponsys/Skulk-IPAM"
 UPDATE_CHECK_ALLOWED = os.environ.get("IPAM_UPDATE_CHECK", "true").lower() not in ("0", "false", "no", "off")
 UPDATE_TTL = 6 * 3600
 
 app.config.update(
-    SESSION_COOKIE_NAME="spazcat_ipam_session",
+    SESSION_COOKIE_NAME="skulk_session",
     SESSION_COOKIE_HTTPONLY=True,
     # Lax (not Strict) so the session survives the top-level redirect back
     # from the OIDC provider
@@ -335,6 +335,17 @@ def init_db():
                 if norm and norm != r["mac"] and not db.execute(
                         f"SELECT 1 FROM {table} WHERE mac=?", (norm,)).fetchone():
                     db.execute(f"UPDATE {table} SET mac=? WHERE {key}=?", (norm, r["k"]))
+
+        # 1.9: renamed from Spazcat IPAM to Skulk. Settings that still hold the
+        # old defaults move to the new ones; anything customised is left alone.
+        for key, old, new in (
+                ("app_name", "spazcat ipam", DEFAULT_APP_NAME),
+                ("update_image", "ghcr.io/samschultzponsys/spazcat-ipam", DEFAULT_UPDATE_IMAGE),
+                ("update_repo", "samschultzponsys/spazcat-ipam", DEFAULT_UPDATE_REPO),
+                ("issues_repo", "samschultzponsys/spazcat-ipam", DEFAULT_UPDATE_REPO)):
+            cur = get_setting(db, key, None)
+            if cur is not None and str(cur).strip().lower() == old:
+                set_setting(db, key, new)
 
         # default settings (never overwrite what's there)
         defaults = dict(SETTING_DEFAULTS)
@@ -1615,7 +1626,7 @@ def start_auto_sync():
 
 
 if __name__ == "__main__":
-    print(f"[spazcat-ipam] v{VERSION}", flush=True)
+    print(f"[skulk-ipam] v{VERSION}", flush=True)
     init_db()
     configure_secret()
     start_auto_sync()
@@ -1627,4 +1638,4 @@ if __name__ == "__main__":
     else:
         # single process (the auto-sync thread must run exactly once), many threads
         serve(app, host="0.0.0.0", port=port, threads=int(os.environ.get("IPAM_THREADS", "8")),
-              ident="spazcat-ipam")
+              ident="skulk-ipam")

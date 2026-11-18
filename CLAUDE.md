@@ -1,10 +1,12 @@
-# CLAUDE.md — Spazcat IPAM
+# CLAUDE.md — Skulk
+
+(Renamed from Spazcat IPAM in 1.9. The old image `spazcat-ipam` is frozen.)
 
 Self-hosted IP address manager layered on top of DHCP controllers. It pulls
 clients from a controller (UniFi, Omada, OPNsense, Pi-hole, AdGuard Home, …),
 lets you sort them into color-coded pools, flags duplicate IPs, and has a two-way
 GitHub Issues panel for the app's own repo. It ships
-as one Docker image: `ghcr.io/samschultzponsys/spazcat-ipam` (amd64 and arm64),
+as one Docker image: `ghcr.io/samschultzponsys/skulk-ipam` (amd64 and arm64),
 port **20080**. Open items are in `NOTES.md`.
 
 ## Stack and layout
@@ -33,7 +35,7 @@ port **20080**. Open items are in `NOTES.md`.
 ## Run / test / deploy
 - **Deploy:** `docker compose pull && docker compose up -d`. Data lives in `./data`:
   `ipam.db`, `backups/`, `branding/` and `fonts/`. The admin password is printed in
-  a box in `docker logs spazcat-ipam` until it's changed.
+  a box in `docker logs skulk-ipam` until it's changed.
 - **Do not reintroduce** manual or build-it-yourself compose options. The user
   wants prebuilt images only.
 - **Local run:** use a venv. Debian's system `cryptography` breaks `authlib`, so

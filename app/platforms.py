@@ -1,5 +1,5 @@
 """
-Sync sources ("platforms") for Spazcat IPAM.
+Sync sources ("platforms") for Skulk.
 
 Every platform turns its controller / router into the same shape:
 

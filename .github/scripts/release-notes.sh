@@ -4,7 +4,7 @@
 # Used by build-image.yml for every new version (and to backfill old ones).
 set -euo pipefail
 V="$1"
-IMAGE="${2:-ghcr.io/samschultzponsys/spazcat-ipam}"
+IMAGE="${2:-ghcr.io/samschultzponsys/skulk-ipam}"
 CHANGELOG="${CHANGELOG:-CHANGELOG.md}"
 RE="^## \\[?v?${V//./\\.}\\]?([^0-9]|$)"
 
